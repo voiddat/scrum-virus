@@ -1,0 +1,6 @@
+rootProject.name = 'scrum-virus'
+
+include 'scrum-virus-api'
+include 'scrum-virus-command-model'
+include 'scrum-virus-query-model'
+

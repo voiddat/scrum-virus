@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
+}
+apply plugin: 'groovy'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+group 'com.madsoft.scrumvirus.command'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-actuator:2.2.6.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-webflux:2.2.6.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa:2.2.6.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-jdbc:2.2.6.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-activemq:2.2.6.RELEASE')
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+    compile('com.google.code.gson:gson:2.8.5')
+
+    compile('com.h2database:h2:1.4.197')
+    testCompile('org.springframework.boot:spring-boot-starter-test:2.2.6.RELEASE')
+    testCompile('io.projectreactor:reactor-test:3.3.4.RELEASE')
+    testCompile('org.assertj:assertj-core:3.11.1')
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M2-groovy-3.0'
+
+}

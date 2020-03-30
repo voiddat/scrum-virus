@@ -1,0 +1,8 @@
+# Project exclude paths
+/.gradle/
+/scrum-virus-api/build/
+/scrum-virus-api/build/classes/java/main/
+/scrum-virus-command-model/build/
+/scrum-virus-command-model/build/classes/java/main/
+/scrum-virus-query-model/build/
+/scrum-virus-query-model/build/classes/java/main/

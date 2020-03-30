@@ -1,0 +1,13 @@
+package com.madsoft.scrumvirus;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ScrumvirusApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ScrumvirusApplication.class, args);
+    }
+
+}
