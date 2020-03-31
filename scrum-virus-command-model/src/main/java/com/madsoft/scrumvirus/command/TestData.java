@@ -23,14 +23,17 @@ public class TestData implements InitializingBean {
     private final CourseRepository courseRepository;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         ScrumEvangelist scrumEvangelist = new ScrumEvangelist();
         scrumEvangelist.setUsername("Kowalski");
         scrumEvangelistRepository.save(scrumEvangelist);
 
-        User user = new User();
-        user.setUsername("Nowak");
-        userRepository.save(user);
+        User nowak = new User();
+        nowak.setUsername("Nowak");
+        userRepository.save(nowak);
 
+        User smith = new User();
+        smith.setUsername("Smith");
+        userRepository.save(smith);
     }
 }
