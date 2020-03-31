@@ -33,6 +33,8 @@ class UsersImplTest extends Specification {
         courseEnrollmentDTOOverdue.getFinishTime() >> Optional.of(LocalDateTime.of(2021, Month.APRIL, 20, 20, 20))
         courseEnrollmentDTOTimely.getUser() >> userDTOTimely
         courseEnrollmentDTOOverdue.getUser() >> userDTOOverdue
+        courseEnrollmentDTOTimely.getCourse() >> courseDTO
+        courseEnrollmentDTOOverdue.getCourse() >> courseDTO
         courseDTO.getDeadline() >> LocalDateTime.of(2020, Month.APRIL, 20, 20, 20)
         courseDTO.getCourseEnrollments() >> Arrays.asList(courseEnrollmentDTOOverdue, courseEnrollmentDTOTimely)
         courseQueryRepository.findById(_) >> Mono.just(courseDTO)
@@ -44,6 +46,37 @@ class UsersImplTest extends Specification {
         then:
         StepVerifier.create(source)
                 .expectNextMatches(user -> user.username == 'Nowak')
+                .expectComplete()
+                .verify()
+    }
+
+    def "should return two overdue users"() {
+        given:
+        userDTOTimely = UserDTO.builder()
+                .username('Kowalski')
+                .build()
+
+        userDTOOverdue = UserDTO.builder()
+                .username('Nowak')
+                .build();
+        courseEnrollmentDTOTimely.getFinishTime() >> Optional.of(LocalDateTime.of(2021, Month.APRIL, 12, 12, 20))
+        courseEnrollmentDTOOverdue.getFinishTime() >> Optional.of(LocalDateTime.of(2021, Month.APRIL, 20, 20, 20))
+        courseEnrollmentDTOTimely.getUser() >> userDTOTimely
+        courseEnrollmentDTOOverdue.getUser() >> userDTOOverdue
+        courseEnrollmentDTOTimely.getCourse() >> courseDTO
+        courseEnrollmentDTOOverdue.getCourse() >> courseDTO
+        courseDTO.getDeadline() >> LocalDateTime.of(2020, Month.APRIL, 20, 20, 20)
+        courseDTO.getCourseEnrollments() >> Arrays.asList(courseEnrollmentDTOOverdue, courseEnrollmentDTOTimely)
+        courseQueryRepository.findById(_) >> Mono.just(courseDTO)
+        def usersImpl = new UsersImpl(courseQueryRepository)
+
+        when:
+        def source = usersImpl.fetchOverdueUsersForGivenCourse(1L)
+
+        then:
+        StepVerifier.create(source)
+                .expectNextMatches(user -> user.username == 'Nowak')
+                .expectNextMatches(user -> user.username == 'Kowalski')
                 .expectComplete()
                 .verify()
     }

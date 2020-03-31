@@ -11,6 +11,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -20,17 +21,22 @@ public class UsersImpl implements Users {
     @Override
     public Flux<UserDTO> fetchOverdueUsersForGivenCourse(long courseId) {
         Mono<CourseDTO> course = courseQueryRepository.findById(courseId);
-        Flux<CourseEnrollmentDTO> courseEnrollments = course.map(CourseDTO::getCourseEnrollments).flatMapMany(Flux::fromIterable);
+        Flux<CourseEnrollmentDTO> courseEnrollments = course
+                .map(CourseDTO::getCourseEnrollments)
+                .flatMapMany(Flux::fromIterable);
+
         return courseEnrollments
-                .zipWith(course)
-                .filter(tuple -> {
-                    if (tuple.getT1().getFinishTime().isPresent()) {
-                        LocalDateTime deadline = tuple.getT2().getDeadline();
-                        return tuple.getT1().getFinishTime().get().isAfter(deadline);
-                    } else {
-                        return LocalDateTime.now().isAfter(tuple.getT2().getDeadline());
-                    }
-                })
-                .map(tuple -> tuple.getT1().getUser());
+                .filter(UsersImpl::isOverdue)
+                .map(CourseEnrollmentDTO::getUser);
     }
+
+    private static boolean isOverdue(CourseEnrollmentDTO courseEnrollmentDTO) {
+        if (courseEnrollmentDTO.getFinishTime().isPresent()) {
+            LocalDateTime deadline = courseEnrollmentDTO.getCourse().getDeadline();
+            return courseEnrollmentDTO.getFinishTime().get().isAfter(deadline);
+        } else {
+            return LocalDateTime.now().isAfter(courseEnrollmentDTO.getCourse().getDeadline());
+        }
+    }
+
 }
