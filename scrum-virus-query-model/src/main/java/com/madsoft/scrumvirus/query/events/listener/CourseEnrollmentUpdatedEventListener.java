@@ -26,6 +26,7 @@ public class CourseEnrollmentUpdatedEventListener {
                 .build();
 
         courseRepository.findById(courseEnrollment.getCourse().getId())
+                .doOnNext(courseDTO -> courseDTO.getCourseEnrollments().removeIf(courseEnrollmentDTO -> courseEnrollmentDTO.getId().equals(courseEnrollment.getId())))
                 .doOnNext(courseDTO -> courseDTO.getCourseEnrollments().add(courseEnrollment))
                 .flatMap(courseRepository::save)
                 .subscribe();

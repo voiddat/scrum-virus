@@ -33,13 +33,7 @@ public class CommandHandler {
     }
 
     public Mono<ServerResponse> enrollCourse(ServerRequest serverRequest) {
-        String courseId = serverRequest.pathVariable("courseId");
-        String userId = serverRequest.pathVariable("userId");
-        EnrollCourseDTO enrollCourseDTO = EnrollCourseDTO.builder()
-                .course(Course.withId(courseId))
-                .user(User.withId(userId))
-                .build();
-
+        EnrollCourseDTO enrollCourseDTO = buildEnrollCourseDTOFromIds(serverRequest);
         return Mono.just(enrollCourseDTO)
                 .map(courseEnrollmentService::enrollCourse)
                 .flatMap(CommandHandler::createResponseWithEnrollCourseDTO)
@@ -47,8 +41,8 @@ public class CommandHandler {
     }
 
     public Mono<ServerResponse> finishCourse(ServerRequest serverRequest) {
-        return serverRequest
-                .bodyToMono(EnrollCourseDTO.class)
+        EnrollCourseDTO enrollCourseDTO = buildEnrollCourseDTOFromIds(serverRequest);
+        return Mono.just(enrollCourseDTO)
                 .map(courseEnrollmentService::finishCourse)
                 .flatMap(CommandHandler::createResponseWithEnrollCourseDTO)
                 .onErrorResume(CommandHandler::createExceptionResponse);
@@ -69,6 +63,15 @@ public class CommandHandler {
     private static Mono<ServerResponse> createExceptionResponse(Throwable exception) {
         return badRequest()
                 .body(fromValue(new RuntimeException(exception.getMessage())));
+    }
+
+    private EnrollCourseDTO buildEnrollCourseDTOFromIds(ServerRequest serverRequest) {
+        String courseId = serverRequest.pathVariable("courseId");
+        String userId = serverRequest.pathVariable("userId");
+        return EnrollCourseDTO.builder()
+                .course(Course.withId(courseId))
+                .user(User.withId(userId))
+                .build();
     }
 
 }

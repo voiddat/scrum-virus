@@ -53,6 +53,14 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
         ).orElseThrow(() -> new IllegalArgumentException("CourseEnrollment not found"));
         courseEnrollment.setFinishDate(LocalDateTime.now());
         courseEnrollmentRepository.save(courseEnrollment);
+
+        enrollCourseDTO = EnrollCourseDTO.builder()
+                .user(courseEnrollment.getUser())
+                .course(courseEnrollment.getCourse())
+                .finishDate(LocalDateTime.now())
+                .id(courseEnrollment.getId())
+                .build();
+
         jmsTemplate.convertAndSend(
                 mqProperties.getCourseEnrollmentUpdatedQueue(),
                 courseEnrollmentEventFactory.createCourseEnrollmentUpdatedEvent(enrollCourseDTO)
