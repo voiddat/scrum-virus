@@ -7,6 +7,7 @@ import com.madsoft.scrumvirus.command.domain.course.repository.CourseRepository;
 import com.madsoft.scrumvirus.command.domain.course.repository.UserRepository;
 import com.madsoft.scrumvirus.command.domain.course.repository.entities.CourseEnrollment;
 import com.madsoft.scrumvirus.command.domain.course.repository.factory.JPACourseEnrollmentFactory;
+import com.madsoft.scrumvirus.command.props.MQProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,15 +20,11 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
-    private final CourseRepository courseRepository;
     private final CourseEnrollmentRepository courseEnrollmentRepository;
-    private final UserRepository userRepository;
     private final JPACourseEnrollmentFactory jpaCourseEnrollmentFactory;
     private final JmsTemplate jmsTemplate;
     private final CourseEnrollmentEventFactory courseEnrollmentEventFactory;
-
-    @Value("COURSE_ENROLLMENT_UPDATED_QUEUE")
-    private String courseEnrollmentEventQueue;
+    private final MQProperties mqProperties;
 
     @Override
     @Transactional
@@ -40,7 +37,7 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
         enrollCourseDTO.setUser(courseEnrollment.getUser());
         enrollCourseDTO.setFinishDate(courseEnrollment.getFinishDate().orElse(null));
         jmsTemplate.convertAndSend(
-                courseEnrollmentEventQueue,
+                mqProperties.getCourseEnrollmentUpdatedQueue(),
                 courseEnrollmentEventFactory.createCourseEnrollmentUpdatedEvent(enrollCourseDTO)
         );
         return enrollCourseDTO;
@@ -57,7 +54,7 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
         courseEnrollment.setFinishDate(LocalDateTime.now());
         courseEnrollmentRepository.save(courseEnrollment);
         jmsTemplate.convertAndSend(
-                courseEnrollmentEventQueue,
+                mqProperties.getCourseEnrollmentUpdatedQueue(),
                 courseEnrollmentEventFactory.createCourseEnrollmentUpdatedEvent(enrollCourseDTO)
         );
         return enrollCourseDTO;

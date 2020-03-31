@@ -15,7 +15,7 @@ public class CourseUpdatedEventListener {
     private final CourseQueryRepository courseQueryRepository;
     private final Gson gson;
 
-    @JmsListener(destination = "COURSE_UPDATED_QUEUE")
+    @JmsListener(destination = "#{@MQProperties.courseUpdatedQueue}")
     public void receiveMessage(String courseUpdatedEvent) {
         final CourseUpdatedEvent event = gson.fromJson(courseUpdatedEvent, CourseUpdatedEvent.class);
         courseQueryRepository.save(

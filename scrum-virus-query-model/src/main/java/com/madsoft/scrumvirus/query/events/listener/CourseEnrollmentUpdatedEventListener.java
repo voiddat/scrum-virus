@@ -15,7 +15,7 @@ public class CourseEnrollmentUpdatedEventListener {
     private final CourseQueryRepository courseRepository;
     private final Gson gson;
 
-    @JmsListener(destination = "COURSE_ENROLLMENT_UPDATED_QUEUE")
+    @JmsListener(destination = "#{@MQProperties.courseEnrollmentUpdatedQueue}")
     public void receiveMessage(String message) {
         final CourseEnrollmentUpdatedEvent event = gson.fromJson(message, CourseEnrollmentUpdatedEvent.class);
         CourseEnrollmentDTO courseEnrollment = CourseEnrollmentDTO.builder()
