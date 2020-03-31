@@ -3,7 +3,6 @@ package com.madsoft.scrumvirus.query.service;
 import com.madsoft.scrumvirus.query.datamodel.CourseDTO;
 import com.madsoft.scrumvirus.query.datamodel.CourseEnrollmentDTO;
 import com.madsoft.scrumvirus.query.datamodel.UserDTO;
-import com.madsoft.scrumvirus.query.repository.CourseEnrollmentQueryRepository;
 import com.madsoft.scrumvirus.query.repository.CourseQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +16,11 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UsersImpl implements Users {
     private final CourseQueryRepository courseQueryRepository;
-    private final CourseEnrollmentQueryRepository courseEnrollmentQueryRepository;
 
     @Override
     public Flux<UserDTO> fetchOverdueUsersForGivenCourse(long courseId) {
         Mono<CourseDTO> course = courseQueryRepository.findById(courseId);
-        Flux<CourseEnrollmentDTO> courseEnrollments = courseEnrollmentQueryRepository.findByCourse_Id(courseId);
+        Flux<CourseEnrollmentDTO> courseEnrollments = course.map(CourseDTO::getCourseEnrollments).flatMapMany(Flux::fromIterable);
         return courseEnrollments
                 .zipWith(course)
                 .filter(tuple -> {
