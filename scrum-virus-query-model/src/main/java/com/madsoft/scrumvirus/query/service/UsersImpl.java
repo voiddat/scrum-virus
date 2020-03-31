@@ -20,12 +20,9 @@ public class UsersImpl implements Users {
 
     @Override
     public Flux<UserDTO> fetchOverdueUsersForGivenCourse(long courseId) {
-        Mono<CourseDTO> course = courseQueryRepository.findById(courseId);
-        Flux<CourseEnrollmentDTO> courseEnrollments = course
+        return courseQueryRepository.findById(courseId)
                 .map(CourseDTO::getCourseEnrollments)
-                .flatMapMany(Flux::fromIterable);
-
-        return courseEnrollments
+                .flatMapMany(Flux::fromIterable)
                 .filter(UsersImpl::isOverdue)
                 .map(CourseEnrollmentDTO::getUser);
     }
