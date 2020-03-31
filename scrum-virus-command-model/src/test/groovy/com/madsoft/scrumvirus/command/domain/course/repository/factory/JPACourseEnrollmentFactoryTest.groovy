@@ -10,15 +10,16 @@ import spock.lang.Specification
 import javax.persistence.EntityNotFoundException
 
 class JPACourseEnrollmentFactoryTest extends Specification {
-    EnrollCourseDTO enrollCourseDTO = new EnrollCourseDTO()
+    EnrollCourseDTO enrollCourseDTO;
     CourseRepository courseRepository = Mock()
     UserRepository userRepository = Mock()
     JPACourseEnrollmentFactory jpaCourseEnrollmentFactory = new JPACourseEnrollmentFactoryImpl(courseRepository, userRepository)
 
     def "user not found"() {
         given:
-        enrollCourseDTO.user = new User()
-        enrollCourseDTO.user.id = 5L
+        enrollCourseDTO = EnrollCourseDTO.builder()
+                .user(User.withId("5"))
+                .build()
         userRepository.findById(_) >> Optional.empty()
 
         when:
@@ -31,13 +32,13 @@ class JPACourseEnrollmentFactoryTest extends Specification {
 
     def "course not found"() {
         given:
-        enrollCourseDTO.user = new User()
-        enrollCourseDTO.user.id = 5L
+        enrollCourseDTO = EnrollCourseDTO.builder()
+                .user(User.withId("5"))
+                .course(Course.withId("6"))
+                .build()
         def user = new User();
         user.username = 'Nowak'
         userRepository.findById(_) >> Optional.of(user)
-        enrollCourseDTO.course = new Course()
-        enrollCourseDTO.course.id = 6L
         courseRepository.findById(_) >> Optional.empty();
 
         when:
@@ -50,13 +51,13 @@ class JPACourseEnrollmentFactoryTest extends Specification {
 
     def "should throw username not permitted exception"() {
         given:
-        enrollCourseDTO.user = new User()
-        enrollCourseDTO.user.id = 5L
+        enrollCourseDTO = EnrollCourseDTO.builder()
+                .user(User.withId("5"))
+                .course(Course.withId("6"))
+                .build()
         def user = new User()
         user.username = 'Abc'
         userRepository.findById(_) >> Optional.of(user)
-        enrollCourseDTO.course = new Course()
-        enrollCourseDTO.course.id = 6L
         courseRepository.findById(_) >> Optional.of(new Course())
 
         when:
@@ -69,13 +70,13 @@ class JPACourseEnrollmentFactoryTest extends Specification {
 
     def "should create CourseEnrollment"() {
         given:
-        enrollCourseDTO.user = new User()
-        enrollCourseDTO.user.id = 5L
+        enrollCourseDTO = EnrollCourseDTO.builder()
+                .user(User.withId("5"))
+                .course(Course.withId("6"))
+                .build()
         def user = new User()
         user.username = 'Nowak'
         userRepository.findById(_) >> Optional.of(user)
-        enrollCourseDTO.course = new Course()
-        enrollCourseDTO.course.id = 6L
         courseRepository.findById(_) >> Optional.of(new Course())
 
         when:

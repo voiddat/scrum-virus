@@ -13,10 +13,10 @@ import java.util.Optional;
 @Builder
 public class CourseEnrollmentDTO {
     @Id
-    private Long id;
-    private CourseDTO course;
-    private UserDTO user;
-    private LocalDateTime finishTime;
+    private final Long id;
+    private final CourseDTO course;
+    private final UserDTO user;
+    private final LocalDateTime finishTime;
 
     public Optional<LocalDateTime> getFinishTime() {
         return Optional.ofNullable(finishTime);

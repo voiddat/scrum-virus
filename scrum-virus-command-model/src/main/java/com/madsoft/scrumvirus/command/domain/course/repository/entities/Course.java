@@ -22,8 +22,6 @@ public class Course {
     @OneToOne(cascade = CascadeType.MERGE)
     private ScrumEvangelist scrumEvangelist;
 
-//    @OneToMany(cascade = CascadeType.MERGE)
-//    private List<User> users;
     @OneToMany
     private List<CourseEnrollment> courseEnrollments;
 
@@ -32,4 +30,10 @@ public class Course {
 
     @Column
     private LocalDateTime deadline;
+
+    public static Course withId(String id) {
+        return Course.builder()
+                .id(Long.parseLong(id))
+                .build();
+    }
 }

@@ -17,13 +17,18 @@ class UsersImplTest extends Specification {
     CourseDTO courseDTO = Mock()
     CourseEnrollmentDTO courseEnrollmentDTOOverdue = Mock()
     CourseEnrollmentDTO courseEnrollmentDTOTimely = Mock()
-    UserDTO userDTOOverdue = new UserDTO()
-    UserDTO userDTOTimely = new UserDTO()
+    UserDTO userDTOOverdue;
+    UserDTO userDTOTimely;
 
     def "should return one overdue user"() {
         given:
-        userDTOTimely.username = 'Kowalski'
-        userDTOOverdue.username = 'Nowak'
+        userDTOTimely = UserDTO.builder()
+                .username('Kowalski')
+                .build()
+
+        userDTOOverdue = UserDTO.builder()
+                .username('Nowak')
+                .build();
         courseEnrollmentDTOTimely.getFinishTime() >> Optional.of(LocalDateTime.of(2019, Month.APRIL, 12, 12, 20))
         courseEnrollmentDTOOverdue.getFinishTime() >> Optional.of(LocalDateTime.of(2021, Month.APRIL, 20, 20, 20))
         courseEnrollmentDTOTimely.getUser() >> userDTOTimely

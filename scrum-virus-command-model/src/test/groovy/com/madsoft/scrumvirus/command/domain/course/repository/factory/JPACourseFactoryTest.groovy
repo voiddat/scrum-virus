@@ -16,8 +16,10 @@ class JPACourseFactoryTest extends Specification {
 
     def "deadline earlier than start date"() {
         given:
-        updateCourseDTO.startDate = LocalDateTime.MAX
-        updateCourseDTO.deadline = LocalDateTime.MIN
+        updateCourseDTO = UpdateCourseDTO.builder()
+                .startDate(LocalDateTime.MAX)
+                .deadline(LocalDateTime.MIN)
+                .build()
 
         when:
         jpaCourseFactory.createCourseOrThrowException(updateCourseDTO)
@@ -29,8 +31,10 @@ class JPACourseFactoryTest extends Specification {
 
     def "no scrum evangelist"() {
         given:
-        updateCourseDTO.startDate = LocalDateTime.MIN
-        updateCourseDTO.deadline = LocalDateTime.MAX
+        updateCourseDTO = UpdateCourseDTO.builder()
+                .startDate(LocalDateTime.MIN)
+                .deadline(LocalDateTime.MAX)
+                .build()
 
         when:
         jpaCourseFactory.createCourseOrThrowException(updateCourseDTO)
@@ -42,12 +46,14 @@ class JPACourseFactoryTest extends Specification {
 
     def "username not within list"() {
         given:
-        updateCourseDTO.startDate = LocalDateTime.MIN
-        updateCourseDTO.deadline = LocalDateTime.MAX
-        updateCourseDTO.scrumEvangelist = new ScrumEvangelist()
+        updateCourseDTO = UpdateCourseDTO.builder()
+                .startDate(LocalDateTime.MIN)
+                .deadline(LocalDateTime.MAX)
+                .scrumEvangelist(new ScrumEvangelist())
+                .courseEnrollments(new ArrayList<>())
+                .build()
         def user = new User();
         user.username = 'Abc'
-        updateCourseDTO.courseEnrollments = new ArrayList<>()
         updateCourseDTO.courseEnrollments.add(CourseEnrollment.builder()
                 .user(user)
                 .build()
@@ -63,10 +69,18 @@ class JPACourseFactoryTest extends Specification {
 
     def "should create Course"() {
         given:
-        updateCourseDTO.startDate = LocalDateTime.MIN
-        updateCourseDTO.deadline = LocalDateTime.MAX
-        updateCourseDTO.scrumEvangelist = new ScrumEvangelist()
-
+        updateCourseDTO = UpdateCourseDTO.builder()
+                .startDate(LocalDateTime.MIN)
+                .deadline(LocalDateTime.MAX)
+                .scrumEvangelist(new ScrumEvangelist())
+                .courseEnrollments(new ArrayList<>())
+                .build()
+        def user = new User();
+        user.username = 'Kowalski'
+        updateCourseDTO.courseEnrollments.add(CourseEnrollment.builder()
+                .user(user)
+                .build()
+        )
 
         when:
         jpaCourseFactory.createCourseOrThrowException(updateCourseDTO)

@@ -1,6 +1,8 @@
 package com.madsoft.scrumvirus.query.datamodel;
 
-import lombok.Data;
-
 public class ScrumEvangelistDTO extends UserDTO {
+
+    public ScrumEvangelistDTO(Long id, String username) {
+        super(id, username);
+    }
 }

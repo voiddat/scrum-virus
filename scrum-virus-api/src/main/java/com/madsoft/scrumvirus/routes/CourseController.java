@@ -21,8 +21,7 @@ public class CourseController {
     @Bean
     public RouterFunction<ServerResponse> route() {
         return RouterFunctions
-                .route(POST("/course"), commandHandler::addNewCourse)
-                .andRoute(PATCH("/course/{id}"), commandHandler::updateCourse)
+                .route(POST("/course"), commandHandler::addOrUpdateCourse)
                 .andRoute(POST("/course/{courseId}/enroll/{userId}"), commandHandler::enrollCourse)
                 .andRoute(POST("/course/{courseId}/finish/{userId}"), commandHandler::finishCourse)
                 .andRoute(GET("/course"), queryHandler::fetchAllCourses)

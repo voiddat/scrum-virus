@@ -6,6 +6,7 @@ import com.madsoft.scrumvirus.command.domain.course.repository.CourseRepository;
 import com.madsoft.scrumvirus.command.domain.course.repository.ScrumEvangelistRepository;
 import com.madsoft.scrumvirus.command.domain.course.repository.entities.Course;
 import com.madsoft.scrumvirus.command.domain.course.repository.factory.JPACourseFactory;
+import com.madsoft.scrumvirus.command.props.MQProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,22 +24,28 @@ public class CourseServiceImpl implements CourseService {
     private final JPACourseFactory jpaCourseFactory;
     private final JmsTemplate jmsTemplate;
     private final CourseEventFactory courseEventFactory;
-
-    //TODO properties
-    @Value("COURSE_UPDATED_QUEUE")
-    private String courseUpdatedQueue;
+    private final MQProperties mqProperties;
 
     @Override
     @Transactional
     public UpdateCourseDTO updateCourse(UpdateCourseDTO updateCourseDTO) {
         Course course = jpaCourseFactory.createCourseOrThrowException(updateCourseDTO);
         course = courseRepository.save(course);
-        updateCourseDTO.setId(course.getId());
-        jmsTemplate.convertAndSend(courseUpdatedQueue, courseEventFactory.createCourseUpdatedEvent(updateCourseDTO));
+
+        updateCourseDTO = UpdateCourseDTO.builder()
+                .id(course.getId())
+                .courseEnrollments(course.getCourseEnrollments())
+                .deadline(course.getDeadline())
+                .scrumEvangelist(course.getScrumEvangelist())
+                .startDate(course.getStartDate())
+                .build();
+
+        jmsTemplate.convertAndSend(mqProperties.getCourseUpdatedQueue(), courseEventFactory.createCourseUpdatedEvent(updateCourseDTO));
         return updateCourseDTO;
     }
 
     @Override
+    @Transactional
     public Mono<Course> fetchCourseById(Long id) {
         Optional<Course> courseOpt = courseRepository.findById(id);
         return courseOpt.map(Mono::just).orElseThrow(IllegalArgumentException::new);

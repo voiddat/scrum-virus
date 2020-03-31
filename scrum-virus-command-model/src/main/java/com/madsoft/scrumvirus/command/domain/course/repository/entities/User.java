@@ -1,6 +1,9 @@
 package com.madsoft.scrumvirus.command.domain.course.repository.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -8,6 +11,9 @@ import java.util.List;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +26,10 @@ public class User {
             "Nowak",
             "Smith"
     );
+
+    public static User withId(String id) {
+        return User.builder()
+                .id(Long.parseLong(id))
+                .build();
+    }
 }

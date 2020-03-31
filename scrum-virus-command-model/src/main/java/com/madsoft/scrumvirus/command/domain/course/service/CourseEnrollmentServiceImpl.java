@@ -3,14 +3,11 @@ package com.madsoft.scrumvirus.command.domain.course.service;
 import com.madsoft.scrumvirus.command.datamodel.EnrollCourseDTO;
 import com.madsoft.scrumvirus.command.domain.course.events.factory.CourseEnrollmentEventFactory;
 import com.madsoft.scrumvirus.command.domain.course.repository.CourseEnrollmentRepository;
-import com.madsoft.scrumvirus.command.domain.course.repository.CourseRepository;
-import com.madsoft.scrumvirus.command.domain.course.repository.UserRepository;
 import com.madsoft.scrumvirus.command.domain.course.repository.entities.CourseEnrollment;
 import com.madsoft.scrumvirus.command.domain.course.repository.factory.JPACourseEnrollmentFactory;
 import com.madsoft.scrumvirus.command.props.MQProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +29,13 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
         CourseEnrollment courseEnrollment = courseEnrollmentRepository.save(
                 jpaCourseEnrollmentFactory.createCourseEnrollmentOrThrowException(enrollCourseDTO)
         );
-        enrollCourseDTO.setId(courseEnrollment.getId());
-        enrollCourseDTO.setCourse(courseEnrollment.getCourse());
-        enrollCourseDTO.setUser(courseEnrollment.getUser());
-        enrollCourseDTO.setFinishDate(courseEnrollment.getFinishDate().orElse(null));
+        enrollCourseDTO = EnrollCourseDTO.builder()
+                .id(courseEnrollment.getId())
+                .course(courseEnrollment.getCourse())
+                .user(courseEnrollment.getUser())
+                .finishDate(courseEnrollment.getFinishDate().orElse(null))
+                .build();
+
         jmsTemplate.convertAndSend(
                 mqProperties.getCourseEnrollmentUpdatedQueue(),
                 courseEnrollmentEventFactory.createCourseEnrollmentUpdatedEvent(enrollCourseDTO)

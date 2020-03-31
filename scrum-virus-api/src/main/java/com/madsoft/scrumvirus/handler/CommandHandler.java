@@ -2,9 +2,10 @@ package com.madsoft.scrumvirus.handler;
 
 import com.madsoft.scrumvirus.command.datamodel.EnrollCourseDTO;
 import com.madsoft.scrumvirus.command.datamodel.UpdateCourseDTO;
+import com.madsoft.scrumvirus.command.domain.course.repository.entities.Course;
+import com.madsoft.scrumvirus.command.domain.course.repository.entities.User;
 import com.madsoft.scrumvirus.command.domain.course.service.CourseEnrollmentService;
 import com.madsoft.scrumvirus.command.domain.course.service.CourseService;
-import com.madsoft.scrumvirus.command.domain.course.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,9 +23,8 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 public class CommandHandler {
     private final CourseService courseService;
     private final CourseEnrollmentService courseEnrollmentService;
-    private final UserService userService;
 
-    public Mono<ServerResponse> addNewCourse(ServerRequest serverRequest) {
+    public Mono<ServerResponse> addOrUpdateCourse(ServerRequest serverRequest) {
         return serverRequest
                 .bodyToMono(UpdateCourseDTO.class)
                 .map(courseService::updateCourse)
@@ -32,13 +32,15 @@ public class CommandHandler {
                 .onErrorResume(CommandHandler::createExceptionResponse);
     }
 
-    public Mono<ServerResponse> updateCourse(ServerRequest serverRequest) {
-        return null;
-    }
-
     public Mono<ServerResponse> enrollCourse(ServerRequest serverRequest) {
-        return serverRequest
-                .bodyToMono(EnrollCourseDTO.class)
+        String courseId = serverRequest.pathVariable("courseId");
+        String userId = serverRequest.pathVariable("userId");
+        EnrollCourseDTO enrollCourseDTO = EnrollCourseDTO.builder()
+                .course(Course.withId(courseId))
+                .user(User.withId(userId))
+                .build();
+
+        return Mono.just(enrollCourseDTO)
                 .map(courseEnrollmentService::enrollCourse)
                 .flatMap(CommandHandler::createResponseWithEnrollCourseDTO)
                 .onErrorResume(CommandHandler::createExceptionResponse);
