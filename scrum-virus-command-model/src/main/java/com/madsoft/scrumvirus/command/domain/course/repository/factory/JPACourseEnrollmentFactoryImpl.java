@@ -22,6 +22,11 @@ public class JPACourseEnrollmentFactoryImpl implements JPACourseEnrollmentFactor
     public CourseEnrollment createCourseEnrollmentOrThrowException(EnrollCourseDTO enrollCourseDTO) {
         User user = userRepository.findById(enrollCourseDTO.getUser().getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found id=" + enrollCourseDTO.getUser().getId()));
+
+        if (!User.userList.contains(user.getUsername())) {
+            throw new IllegalArgumentException("Username " + user.getUsername() + " is not permitted");
+        }
+
         Course course = courseRepository.findById(enrollCourseDTO.getCourse().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Course not found id=" + enrollCourseDTO.getCourse().getId()));
 

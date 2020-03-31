@@ -15,9 +15,9 @@ public class User {
     @Column
     private String username;
 
-//    public static List<String> userList = Arrays.asList(
-//            "Kowalski",
-//            "Nowak",
-//            "Smith"
-//    );
+    public static List<String> userList = Arrays.asList(
+            "Kowalski",
+            "Nowak",
+            "Smith"
+    );
 }

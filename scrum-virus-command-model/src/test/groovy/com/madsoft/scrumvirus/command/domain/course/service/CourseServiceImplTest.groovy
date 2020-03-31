@@ -26,7 +26,7 @@ class CourseServiceImplTest extends Specification {
         jpaCourseFactory.createCourseOrThrowException(updateCourseDTO) >> course
         JmsTemplate jmsTemplate = Mock()
         CourseEventFactory courseEventFactory = Mock()
-        CourseServiceImpl courseServiceImpl = new CourseServiceImpl(courseRepository, jpaCourseFactory, jmsTemplate, courseEventFactory)
+        def courseServiceImpl = new CourseServiceImpl(courseRepository, jpaCourseFactory, jmsTemplate, courseEventFactory)
 
         when:
         courseServiceImpl.updateCourse(updateCourseDTO)
@@ -34,17 +34,4 @@ class CourseServiceImplTest extends Specification {
         then:
         1 * jmsTemplate.convertAndSend(_, _)
     }
-
-//    def "shouldFailDeadlineEarlierThanStart"() {
-//        given:
-//        CourseRepository courseRepository = Mock()
-//
-//
-//        UpdateCourseDTO updateCourseDTO = new UpdateCourseDTO();
-//        updateCourseDTO.deadline = LocalDateTime.MIN;
-//        updateCourseDTO.startDate = LocalDateTime.MAX;
-//        when:
-//
-//        then:
-//    }
 }

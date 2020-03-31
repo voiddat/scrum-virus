@@ -33,7 +33,9 @@ class JPACourseEnrollmentFactoryTest extends Specification {
         given:
         enrollCourseDTO.user = new User()
         enrollCourseDTO.user.id = 5L
-        userRepository.findById(_) >> Optional.of(new User())
+        def user = new User();
+        user.username = 'Nowak'
+        userRepository.findById(_) >> Optional.of(user)
         enrollCourseDTO.course = new Course()
         enrollCourseDTO.course.id = 6L
         courseRepository.findById(_) >> Optional.empty();
@@ -46,19 +48,40 @@ class JPACourseEnrollmentFactoryTest extends Specification {
         ex.message == "Course not found id=6"
     }
 
-    def "should create CourseEnrollment"() {
+    def "should throw username not permitted exception"() {
         given:
         enrollCourseDTO.user = new User()
         enrollCourseDTO.user.id = 5L
-        userRepository.findById(_) >> Optional.of(new User())
+        def user = new User()
+        user.username = 'Abc'
+        userRepository.findById(_) >> Optional.of(user)
         enrollCourseDTO.course = new Course()
         enrollCourseDTO.course.id = 6L
-        courseRepository.findById(_) >> Optional.of(new Course());
+        courseRepository.findById(_) >> Optional.of(new Course())
 
         when:
         jpaCourseEnrollmentFactory.createCourseEnrollmentOrThrowException(enrollCourseDTO)
 
         then:
-        1==1
+        IllegalArgumentException ex = thrown()
+        ex.message == "Username Abc is not permitted"
+    }
+
+    def "should create CourseEnrollment"() {
+        given:
+        enrollCourseDTO.user = new User()
+        enrollCourseDTO.user.id = 5L
+        def user = new User()
+        user.username = 'Nowak'
+        userRepository.findById(_) >> Optional.of(user)
+        enrollCourseDTO.course = new Course()
+        enrollCourseDTO.course.id = 6L
+        courseRepository.findById(_) >> Optional.of(new Course())
+
+        when:
+        jpaCourseEnrollmentFactory.createCourseEnrollmentOrThrowException(enrollCourseDTO)
+
+        then:
+        1 == 1
     }
 }

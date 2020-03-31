@@ -24,22 +24,13 @@ public class TestData implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        ScrumEvangelist scrumEvangelist = new ScrumEvangelist();
+        scrumEvangelist.setUsername("Kowalski");
+        scrumEvangelistRepository.save(scrumEvangelist);
+
         User user = new User();
-        user.setId(2L);
         user.setUsername("UserA");
         userRepository.save(user);
-        ScrumEvangelist scrumEvangelist = new ScrumEvangelist();
-        scrumEvangelist.setId(1L);
-        scrumEvangelist.setUsername("kowalski");
-        scrumEvangelistRepository.save(scrumEvangelist);
-//        Course course = new Course();
-//        course.setId(123L);
-//        course.setDeadline(LocalDateTime.of(2020, Month.FEBRUARY, 1, 12, 30));
-//        course.setScrumEvangelist(new ScrumEvangelist());
-//        course.setStartDate(LocalDateTime.of(2019, Month.FEBRUARY, 1, 12, 30));
-//        course.setUsers(new ArrayList<>());
-//        Course course1 = courseRepository.saveAndFlush(course);
-////        course = courseRepository.findById(123L).get();
-//        System.out.println("abc");
+
     }
 }

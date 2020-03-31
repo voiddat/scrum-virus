@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 @Data
 public class EnrollCourseDTO {
     private long id;
-//    private long courseId;
-//    private long userId;
     private Course course;
     private User user;
     private LocalDateTime finishDate;

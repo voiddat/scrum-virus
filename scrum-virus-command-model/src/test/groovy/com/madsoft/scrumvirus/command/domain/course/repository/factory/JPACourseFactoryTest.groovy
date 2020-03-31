@@ -2,8 +2,9 @@ package com.madsoft.scrumvirus.command.domain.course.repository.factory
 
 import com.madsoft.scrumvirus.command.datamodel.UpdateCourseDTO
 import com.madsoft.scrumvirus.command.domain.course.exceptions.CourseInvalidException
-import com.madsoft.scrumvirus.command.domain.course.repository.entities.Course
+import com.madsoft.scrumvirus.command.domain.course.repository.entities.CourseEnrollment
 import com.madsoft.scrumvirus.command.domain.course.repository.entities.ScrumEvangelist
+import com.madsoft.scrumvirus.command.domain.course.repository.entities.User
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -39,7 +40,26 @@ class JPACourseFactoryTest extends Specification {
         ex.message == "No scrumEvangelist"
     }
 
-    //todo test case with username not within list
+    def "username not within list"() {
+        given:
+        updateCourseDTO.startDate = LocalDateTime.MIN
+        updateCourseDTO.deadline = LocalDateTime.MAX
+        updateCourseDTO.scrumEvangelist = new ScrumEvangelist()
+        def user = new User();
+        user.username = 'Abc'
+        updateCourseDTO.courseEnrollments = new ArrayList<>()
+        updateCourseDTO.courseEnrollments.add(CourseEnrollment.builder()
+                .user(user)
+                .build()
+        )
+
+        when:
+        jpaCourseFactory.createCourseOrThrowException(updateCourseDTO)
+
+        then:
+        CourseInvalidException ex = thrown()
+        ex.message == 'Incorrect username'
+    }
 
     def "should create Course"() {
         given:
@@ -47,10 +67,11 @@ class JPACourseFactoryTest extends Specification {
         updateCourseDTO.deadline = LocalDateTime.MAX
         updateCourseDTO.scrumEvangelist = new ScrumEvangelist()
 
+
         when:
-        Course course = jpaCourseFactory.createCourseOrThrowException(updateCourseDTO)
+        jpaCourseFactory.createCourseOrThrowException(updateCourseDTO)
 
         then:
-        1==1
+        1 == 1
     }
 }
