@@ -9,6 +9,7 @@ import reactor.test.StepVerifier
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+import java.time.Month
 
 class UsersImplTest extends Specification {
 
@@ -23,11 +24,11 @@ class UsersImplTest extends Specification {
         given:
         userDTOTimely.username = 'Kowalski'
         userDTOOverdue.username = 'Nowak'
-        courseEnrollmentDTOTimely.getFinishTime() >> Optional.of(LocalDateTime.MIN)
-        courseEnrollmentDTOOverdue.getFinishTime() >> Optional.of(LocalDateTime.MAX)
+        courseEnrollmentDTOTimely.getFinishTime() >> Optional.of(LocalDateTime.of(2019, Month.APRIL, 12, 12, 20))
+        courseEnrollmentDTOOverdue.getFinishTime() >> Optional.of(LocalDateTime.of(2021, Month.APRIL, 20, 20, 20))
         courseEnrollmentDTOTimely.getUser() >> userDTOTimely
         courseEnrollmentDTOOverdue.getUser() >> userDTOOverdue
-        courseDTO.getDeadline() >> LocalDateTime.now()
+        courseDTO.getDeadline() >> LocalDateTime.of(2020, Month.APRIL, 20, 20, 20)
         courseDTO.getCourseEnrollments() >> Arrays.asList(courseEnrollmentDTOOverdue, courseEnrollmentDTOTimely)
         courseQueryRepository.findById(_) >> Mono.just(courseDTO)
         def usersImpl = new UsersImpl(courseQueryRepository)

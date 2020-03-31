@@ -1,0 +1,10 @@
+version: '3'
+services:
+  mongo:
+    image: "mongo:latest"
+    ports:
+      - "27017:27017"
+  scrum-virus:
+    image: "scrum-virus:1.0"
+    ports:
+      - "8080:8080"

@@ -29,7 +29,7 @@ public class TestData implements InitializingBean {
         scrumEvangelistRepository.save(scrumEvangelist);
 
         User user = new User();
-        user.setUsername("UserA");
+        user.setUsername("Nowak");
         userRepository.save(user);
 
     }
