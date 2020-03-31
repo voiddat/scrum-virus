@@ -1,4 +1,4 @@
-package com.madsoft.scrumvirus.controller;
+package com.madsoft.scrumvirus.routes;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
