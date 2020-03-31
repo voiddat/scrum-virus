@@ -2,12 +2,19 @@ plugins {
     id 'java'
     id "io.spring.dependency-management" version "1.0.9.RELEASE"
 }
+apply plugin: 'groovy'
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 group 'com.madsoft.scrumvirus.query'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
 }
 
 dependencies {
@@ -25,4 +32,5 @@ dependencies {
     testCompile('org.springframework.boot:spring-boot-starter-test:2.2.6.RELEASE')
     testCompile('io.projectreactor:reactor-test:3.3.4.RELEASE')
     testCompile('org.assertj:assertj-core:3.11.1')
+    testCompile group: 'org.spockframework', name: 'spock-core', version: '2.0-M2-groovy-3.0'
 }

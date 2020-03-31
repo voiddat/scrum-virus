@@ -15,15 +15,6 @@ public class CoursesImpl implements Courses {
 
     @Override
     public Mono<CourseDTO> fetchCourseById(Long id) {
-//        User user = new User();
-//        user.setId(1L);
-//        user.setUsername("abc");
-//        Map<User, Boolean> users = new HashMap<>();
-//        users.put(user, false);
-//        CourseDTO course = CourseDTO.builder()
-//                .users(users).build();
-//
-//        return Mono.just(course);
         return courseQueryRepository.findById(id);
     }
 
