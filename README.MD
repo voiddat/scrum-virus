@@ -1,9 +1,14 @@
-#scrum-virus
-Scrum-virus is a course management application. It is developed with CQRS pattern.
-##Prerequisites
+# scrum-virus
+
+Scrum-virus is a course management application. It is developed with CQRS pattern with use of Spring WebFlux. H2 in-memory database was used in command layer and reactive mongodb in query layer.
+
+## Prerequisites
+
 * docker
 * jdk8
-##Running
+
+## Running
+
 To run that application, execute:
 * run.bat for Windows OS
 * run.sh for Unix-based OS
