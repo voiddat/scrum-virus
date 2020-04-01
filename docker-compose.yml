@@ -5,6 +5,7 @@ services:
     ports:
       - "27017:27017"
   scrum-virus:
-    image: "scrum-virus:1.0"
+    build:
+      .
     ports:
       - "8080:8080"
