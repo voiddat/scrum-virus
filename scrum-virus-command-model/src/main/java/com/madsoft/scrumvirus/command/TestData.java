@@ -20,7 +20,6 @@ import java.util.ArrayList;
 public class TestData implements InitializingBean {
     private final UserRepository userRepository;
     private final ScrumEvangelistRepository scrumEvangelistRepository;
-    private final CourseRepository courseRepository;
 
     @Override
     public void afterPropertiesSet() {
@@ -35,5 +34,9 @@ public class TestData implements InitializingBean {
         User smith = new User();
         smith.setUsername("Smith");
         userRepository.save(smith);
+
+        User nowicki = new User();
+        nowicki.setUsername("Nowicki");
+        userRepository.save(nowicki);
     }
 }
