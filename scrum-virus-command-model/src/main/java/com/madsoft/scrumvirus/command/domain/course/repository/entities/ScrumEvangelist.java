@@ -10,7 +10,6 @@ import javax.persistence.InheritanceType;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance
 public class ScrumEvangelist extends User {
-    private String specialization;
 }
