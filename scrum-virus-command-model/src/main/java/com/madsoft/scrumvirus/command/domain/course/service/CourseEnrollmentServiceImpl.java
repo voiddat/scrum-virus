@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -26,9 +27,13 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentService {
     @Override
     @Transactional
     public EnrollCourseDTO enrollCourse(EnrollCourseDTO enrollCourseDTO) {
-        CourseEnrollment courseEnrollment = courseEnrollmentRepository.save(
-                jpaCourseEnrollmentFactory.createCourseEnrollmentOrThrowException(enrollCourseDTO)
-        );
+        CourseEnrollment courseEnrollmentFromFactory = jpaCourseEnrollmentFactory.createCourseEnrollmentOrThrowException(enrollCourseDTO);
+        Optional<CourseEnrollment> courseEnrollmentFromDb = courseEnrollmentRepository.findByCourseAndUser(courseEnrollmentFromFactory.getCourse(), courseEnrollmentFromFactory.getUser());
+        if (courseEnrollmentFromDb.isPresent()) {
+            throw new IllegalArgumentException("User is already enrolled to this course");
+        }
+        CourseEnrollment courseEnrollment = courseEnrollmentRepository.save(courseEnrollmentFromFactory);
+
         enrollCourseDTO = EnrollCourseDTO.builder()
                 .id(courseEnrollment.getId())
                 .course(courseEnrollment.getCourse())
